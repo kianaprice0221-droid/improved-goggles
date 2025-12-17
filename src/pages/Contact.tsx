@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -10,6 +11,8 @@ function Contact() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -18,10 +21,25 @@ function Contact() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const { error: submitError } = await supabase
+        .from('contacts')
+        .insert([{
+          name: formData.name,
+          email: formData.email,
+          company: formData.company || '',
+          service: formData.service,
+          message: formData.message
+        }]);
+
+      if (submitError) throw submitError;
+
+      setSubmitted(true);
       setFormData({
         name: '',
         email: '',
@@ -29,8 +47,16 @@ function Contact() {
         service: '',
         message: ''
       });
-      setSubmitted(false);
-    }, 3000);
+
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 5000);
+    } catch (err) {
+      console.error('Error submitting form:', err);
+      setError('Something went wrong. Please try again or email us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,6 +101,12 @@ function Contact() {
           {submitted && (
             <div className="success-message">
               Thank you! We'll get back to you within 24 hours.
+            </div>
+          )}
+
+          {error && (
+            <div className="error-message">
+              {error}
             </div>
           )}
 
@@ -149,8 +181,8 @@ function Contact() {
             />
           </div>
 
-          <button type="submit" className="submit-btn">
-            Send Message
+          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? 'Sending...' : 'Send Message'}
           </button>
         </form>
       </div>

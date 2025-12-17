@@ -166,7 +166,7 @@ spline-viewer {
   left: 0;
   right: 0;
   z-index: 100;
-  padding: max(env(safe-area-inset-top), 1.25rem) 2rem;
+  padding: max(env(safe-area-inset-top), 1rem) 2rem;
   display: flex;
   justify-content: center;
   pointer-events: none;
@@ -177,35 +177,59 @@ spline-viewer {
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  padding: 0.875rem 2rem;
-  background: linear-gradient(135deg, rgba(0, 20, 40, 0.7) 0%, rgba(20, 40, 70, 0.5) 100%);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1.5px solid rgba(0, 212, 255, 0.25);
-  border-radius: 2rem;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, rgba(255, 20, 147, 0.15) 0%, rgba(138, 43, 226, 0.12) 50%, rgba(0, 191, 255, 0.15) 100%);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 2px solid transparent;
+  border-radius: 3rem;
   box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.6),
-    inset 0 1px 2px rgba(255, 255, 255, 0.12),
-    0 0 80px rgba(0, 212, 255, 0.08),
-    inset 0 0 40px rgba(0, 212, 255, 0.04);
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
   width: auto;
   max-width: 90%;
   position: relative;
   pointer-events: all;
+  animation: navbar-float 6s ease-in-out infinite;
+}
+
+@keyframes navbar-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 .navbar-container::before {
   content: '';
   position: absolute;
-  inset: -1.5px;
-  border-radius: 2rem;
-  padding: 1.5px;
-  background: linear-gradient(90deg, rgba(0, 212, 255, 0.4) 0%, rgba(0, 100, 150, 0.2) 50%, rgba(0, 212, 255, 0.4) 100%);
+  inset: 0;
+  border-radius: 3rem;
+  padding: 2px;
+  background: linear-gradient(90deg,
+    rgba(255, 20, 147, 0.6) 0%,
+    rgba(138, 43, 226, 0.6) 25%,
+    rgba(0, 191, 255, 0.6) 50%,
+    rgba(138, 43, 226, 0.6) 75%,
+    rgba(255, 20, 147, 0.6) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0.5;
+  opacity: 0.8;
   pointer-events: none;
+  animation: border-flow 3s linear infinite;
+  background-size: 200% 100%;
+}
+
+@keyframes border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
 }
 
 .navbar-logo {
@@ -215,17 +239,23 @@ spline-viewer {
   flex-shrink: 0;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .navbar-logo:hover {
-  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.navbar-logo:hover .logo-image {
+  filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.6));
 }
 
 .logo-image {
   width: 2.5rem;
   height: 2.5rem;
   object-fit: contain;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
 }
 
 .logo-icon {
@@ -277,7 +307,7 @@ spline-viewer {
 
 .nav-link {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -289,32 +319,60 @@ spline-viewer {
   border-radius: 1.5rem;
 }
 
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0.3rem;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, #ff1493 0%, #8a2be2 50%, #00bfff 100%);
+  transition: transform 0.3s ease;
+  border-radius: 2px;
+}
+
 .nav-link:hover {
-  color: #00d4ff;
-  background: rgba(0, 212, 255, 0.1);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link:hover::after {
+  transform: translateX(-50%) scaleX(1);
 }
 
 .nav-link.active {
   color: #ffffff;
-  background: linear-gradient(135deg, #00b4d4 0%, #0084a8 100%);
+  background: linear-gradient(135deg, rgba(255, 20, 147, 0.3) 0%, rgba(138, 43, 226, 0.3) 100%);
   font-weight: 600;
-  box-shadow: 0 4px 16px rgba(0, 170, 200, 0.35);
+  box-shadow: 0 4px 16px rgba(255, 20, 147, 0.3);
 }
 
 .btn-cta {
   padding: 0.7rem 1.75rem;
-  background: linear-gradient(135deg, #00d4ff 0%, #00a8d4 100%);
+  background: linear-gradient(135deg, #ff1493 0%, #8a2be2 50%, #00bfff 100%);
+  background-size: 200% 100%;
   color: #ffffff;
   border: none;
-  border-radius: 1.5rem;
+  border-radius: 2rem;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   flex-shrink: 0;
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 20, 147, 0.4);
   position: relative;
   overflow: hidden;
+  animation: gradient-shimmer 3s ease infinite;
+}
+
+@keyframes gradient-shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .btn-cta::before {
@@ -327,9 +385,8 @@ spline-viewer {
 }
 
 .btn-cta:hover {
-  background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0, 212, 255, 0.45);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(255, 20, 147, 0.6);
 }
 
 .btn-cta:hover::before {

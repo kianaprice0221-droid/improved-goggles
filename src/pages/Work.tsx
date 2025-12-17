@@ -1,8 +1,14 @@
+import { useState } from 'react';
+
 function Work() {
+  const [activeTab, setActiveTab] = useState('all');
+  const [selectedProject, setSelectedProject] = useState<number | null>(null);
+
   const projects = [
     {
       client: "FitLife Gym",
-      category: "Instagram Growth",
+      category: "instagram",
+      categoryLabel: "Instagram",
       description: "Grew Instagram following from 2K to 45K in 6 months with engaging fitness content and community building.",
       results: [
         "2,150% increase in followers",
@@ -13,7 +19,8 @@ function Work() {
     },
     {
       client: "TechStartup Co",
-      category: "TikTok Management",
+      category: "tiktok",
+      categoryLabel: "TikTok",
       description: "Created viral tech content strategy resulting in 5 videos hitting over 1M views each.",
       results: [
         "500K+ followers gained",
@@ -24,7 +31,8 @@ function Work() {
     },
     {
       client: "Bloom Beauty",
-      category: "Full Package",
+      category: "full",
+      categoryLabel: "Full Package",
       description: "Complete social media transformation across Instagram, TikTok, and YouTube for beauty brand.",
       results: [
         "Combined 200K+ followers",
@@ -32,41 +40,19 @@ function Work() {
         "500% ROI on social ads"
       ],
       image: "https://images.pexels.com/photos/3373730/pexels-photo-3373730.jpeg?auto=compress&cs=tinysrgb&w=800"
-    },
-    {
-      client: "Chef Marco's Kitchen",
-      category: "YouTube Channel",
-      description: "Built YouTube cooking channel from scratch to 100K subscribers with weekly recipe content.",
-      results: [
-        "100K subscribers in 8 months",
-        "3M+ monthly views",
-        "Monetization achieved month 4"
-      ],
-      image: "https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?auto=compress&cs=tinysrgb&w=800"
-    },
-    {
-      client: "Urban Threads",
-      category: "Instagram & TikTok",
-      description: "Fashion brand social media management with focus on Gen-Z audience and trending content.",
-      results: [
-        "Instagram: 75K followers",
-        "TikTok: 120K followers",
-        "Monthly sales up 400%"
-      ],
-      image: "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-    },
-    {
-      client: "GreenEarth Sustainability",
-      category: "LinkedIn Professional",
-      description: "B2B content strategy establishing thought leadership in sustainability sector.",
-      results: [
-        "50K+ LinkedIn followers",
-        "Generated 200+ B2B leads",
-        "Speaking opportunities gained"
-      ],
-      image: "https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=800"
     }
   ];
+
+  const tabs = [
+    { id: 'all', label: 'All Projects' },
+    { id: 'instagram', label: 'Instagram' },
+    { id: 'tiktok', label: 'TikTok' },
+    { id: 'full', label: 'Full Package' }
+  ];
+
+  const filteredProjects = activeTab === 'all'
+    ? projects
+    : projects.filter(p => p.category === activeTab);
 
   return (
     <div className="page-content">
@@ -75,13 +61,25 @@ function Work() {
         <p className="work-subtitle">Real results for real clients. See how we've helped brands grow their social presence.</p>
       </div>
 
+      <div className="work-tabs">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            className={`work-tab ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       <div className="work-grid">
-        {projects.map((project, index) => (
-          <div key={index} className="work-card">
+        {filteredProjects.map((project, index) => (
+          <div key={index} className="work-card" onClick={() => setSelectedProject(index)}>
             <div className="work-image-container">
               <img src={project.image} alt={project.client} className="work-image" />
               <div className="work-overlay">
-                <span className="work-category">{project.category}</span>
+                <span className="work-category">{project.categoryLabel}</span>
               </div>
             </div>
             <div className="work-content">
@@ -99,6 +97,30 @@ function Work() {
           </div>
         ))}
       </div>
+
+      {selectedProject !== null && (
+        <div className="work-modal" onClick={() => setSelectedProject(null)}>
+          <div className="work-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="work-modal-close" onClick={() => setSelectedProject(null)}>×</button>
+            <div className="work-modal-body">
+              <img src={filteredProjects[selectedProject].image} alt={filteredProjects[selectedProject].client} className="work-modal-image" />
+              <div className="work-modal-info">
+                <span className="work-modal-category">{filteredProjects[selectedProject].categoryLabel}</span>
+                <h2 className="work-modal-client">{filteredProjects[selectedProject].client}</h2>
+                <p className="work-modal-description">{filteredProjects[selectedProject].description}</p>
+                <div className="work-modal-results">
+                  <h4>Key Results:</h4>
+                  <ul>
+                    {filteredProjects[selectedProject].results.map((result, idx) => (
+                      <li key={idx}>{result}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
